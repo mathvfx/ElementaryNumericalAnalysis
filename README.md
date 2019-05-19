@@ -31,11 +31,15 @@ Approximation theory here is quite important when we consider the tools of linea
 Once we have take care of the above categories, we may return to learn numerical techniques for solving Ordinary Differential Equations with Initial-Values. 
 
 
-##
+#
 ### Primary Tools
 - Python 3
 - Python Library: Numpy, Matplotlib, Scipy, Sympy
 - Vim, Jupyter
+
+Since this project will utilize `python3`, we will follow Python's standard coding convention as closely as possible.
+[Style Guide for Python Code](https://www.python.org/dev/peps/pep-0008/)
+
 
 
 #
