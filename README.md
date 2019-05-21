@@ -3,7 +3,8 @@ There already exists many advanced numerical techniques to solve hard mathematic
 
 1. To practice programming method using Python (for now!)  
 2. To review and to solidifies understanding in numerical linear algebra for employment in wide-ranging industry
-3. As a programming portfolio for consideration of employment
+3. As a programming portfolio for insight into my workflow and thought-process.
+4. As a programming portfolio for employment consideration.
 
 
 ##  
