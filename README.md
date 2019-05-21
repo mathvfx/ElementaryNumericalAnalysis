@@ -1,9 +1,9 @@
 # Elementary Numerical Analysis
-There already exists many advanced numerical techniques to solve hard mathematical problems, thus the chief purpose of this personal project is three folds:
+There already exists many advanced numerical techniques to solve hard mathematical problems, thus the chief purpose of this personal project is four-fold:
 
 1. To practice programming method using Python (for now!)  
 2. To review and to solidifies understanding in numerical linear algebra for employment in wide-ranging industry
-3. As a programming portfolio for insight into my workflow and thought-process.
+3. As a programming portfolio for insight into my workflow and my thought-process.
 4. As a programming portfolio for employment consideration.
 
 
