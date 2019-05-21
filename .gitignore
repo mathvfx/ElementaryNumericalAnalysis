@@ -1,0 +1,14 @@
+*~
+
+*.swp
+*.pyc
+*.pkl
+
+# Compiled intermediaries
+*.o
+*.so
+
+# OS generated files
+.DS_Store
+.Trashes
+Thumbs.db
