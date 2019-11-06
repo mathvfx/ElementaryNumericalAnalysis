@@ -53,4 +53,4 @@ My source/reference materials are:
  * `PRINCIPLES OF MATHEMATICAL ANALYSIS (Rudin)`
  * `NUMERICAL ANALYSIS (Burden and Faires)`
  
-I am in no way endorsing any of these textbooks, and my opinions are entirely my own.
+##### I am in no way endorsing any of these textbooks, and my opinions are entirely my own.
