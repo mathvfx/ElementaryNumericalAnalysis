@@ -2,11 +2,10 @@
 There already exists many advanced numerical techniques to solve hard mathematical problems, thus the chief purpose of this personal project is four-fold:
 
 1. To practice programming method using Python (for now!)  
-2. To review and to solidifies understanding in numerical linear algebra for employment in wide-ranging industry
-3. As a programming portfolio for insight into my workflow and my thought-process.
-4. As a programming portfolio for employment consideration.
+2. To review and solidify understanding in numerical linear algebra methods for employment in wide-ranging industry
+3. As a programming portfolio for employment consideration.
 
-_Wikipage write up will follow later._
+##### _Wikipage write up will follow later._
 
 ##  
 ### Project Categories
@@ -53,4 +52,4 @@ My source/reference materials are:
  * `PRINCIPLES OF MATHEMATICAL ANALYSIS (Rudin)`
  * `NUMERICAL ANALYSIS (Burden and Faires)`
  
-##### I am in no way endorsing any of these textbooks, and my opinions are entirely my own.
+##### _I am in no way endorsing any of these textbooks, and my opinions are entirely my own._
