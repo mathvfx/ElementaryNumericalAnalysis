@@ -6,6 +6,7 @@ There already exists many advanced numerical techniques to solve hard mathematic
 3. As a programming portfolio for insight into my workflow and my thought-process.
 4. As a programming portfolio for employment consideration.
 
+_Wikipage write up will follow later._
 
 ##  
 ### Project Categories
