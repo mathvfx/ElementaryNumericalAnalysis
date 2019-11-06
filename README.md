@@ -50,7 +50,7 @@ My source/reference materials are:
  * `CALCULUS IN 3D (Nitecki)`
  * `ELEMENTARY ANALYSIS (Ross)`
  * `LINEAR ALGEBRA DONE RIGHT (Axler)`
- * `PRINCIPAL OF MATHEMATICAL ANALYSIS (Rudin)`
+ * `PRINCIPLES OF MATHEMATICAL ANALYSIS (Rudin)`
  * `NUMERICAL ANALYSIS (Burden and Faires)`
  
 I am in no way endorsing any of these textbooks, and my opinions are entirely my own.
