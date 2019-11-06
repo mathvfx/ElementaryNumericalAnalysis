@@ -45,6 +45,10 @@ Since this project will utilize `python3`, we will follow Python's standard codi
 
 #
 ### Source and Learning Materials
-My primary source and reference material will be `BURDEN and FAIRES' NUMERICAL ANALYSIS (10e)`.
-  
-Please note I am in no way endorsing any of these textbooks, and my opinions are entirely my own.
+My source/reference materials are:
+ * `CALCULUS IN 3D (Nitecki)`
+ * `ELEMENTARY ANALYSIS (Ross)`
+ * `LINEAR ALGEBRA DONE RIGHT (Axler)`
+ * `NUMERICAL ANALYSIS (Burden and Faires)`
+ 
+I am in no way endorsing any of these textbooks, and my opinions are entirely my own.
