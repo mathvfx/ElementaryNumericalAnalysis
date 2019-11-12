@@ -1,9 +1,12 @@
 #!env python3
+# pylint: disable=C0303
+
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # A personal academic exercise for elementary numerical analysis to study and 
 # explore well-known Root-Finder algorithms for continuous, univariate 
-# real-valued functions. 
-# 
+# real-valued functions.
+#
+
 # For production code, please consider using SciPy library.
 #
 # TODO:
@@ -18,9 +21,9 @@ import array
 import math
 
 class FindRoot:
-    '''A root-finding class for continuous, real-valued function of single 
+    '''A root-finding class for continuous, real-valued function of single
     variable using several functional iteration schemes.
-    
+
     Note that it is user's responsibility to provide efficient mathematics
     function and its derivatives where necessary-- this class does not
     perform any symbolic operations.
@@ -29,8 +32,9 @@ class FindRoot:
     ------------
         1) All mathematical functions must be a continuous function over its
            domain.
-
     '''
+
+
     def __init__(self, math_expr: callable):
         '''FindRoot class constructor.
 
@@ -38,9 +42,9 @@ class FindRoot:
         ----------
         math_expr : callable, required
                     A callable Mathematics function for which we will attempt to
-                    find solution for the form f(x) = 0 for all real-value x. 
-                    For example: exp(x**2) + x**3 - 10 = 0, for which we want to 
-                    find numerical solution for x. 
+                    find solution for the form f(x) = 0 for all real-value x.
+                    For example: exp(x**2) + x**3 - 10 = 0, for which we want to
+                    find numerical solution for x.
         '''
         if not callable(math_expr):
             raise TypeError(" >> 'math_expr' must be callable math function")
@@ -48,28 +52,31 @@ class FindRoot:
         self.Configure()
 
 
-    def _sgn(self, val: float) -> int:
+    @staticmethod
+    def _sgn(val: float) -> int:
         '''Return signum value of the value.
         For an efficient signum function, consider using numpy.sign()
         '''
         if val > 0:
             return 1
-        elif val < 0:
+
+        if val < 0:
             return -1
-        else:
-            return 0
+
+        return 0
 
 
     def Bisection(self, bracket: tuple, sol_array: dict = None) -> float:
         '''Perform a solution search to univariate mathematics function of the
-        form f(x) = 0 by continuously halving the given interval (bracketing) 
+        form f(x) = 0 by continuously halving the given interval (bracketing)
         until value is within error tolerance.
 
+        Consider scipy.optimize.bisect() for production code.
 
         Parameters
         ----------
         bracket : 2-float, required.
-                  Interval (a,b) with a <= b for which a solution may be located. 
+                  Interval (a,b) with a <= b for which a solution may be located.
         sol_array : dictionary, optional.
                     A "pass-by-reference" way of retriving interim solutions
                     for later analysis.
@@ -102,7 +109,7 @@ class FindRoot:
             return None
 
         # Perform bisection search until max limit or within tolerance
-        for i in range(1, self._max_iter):
+        for _ in range(1, self._max_iter):
             mid_pt = (b-a) / 2.0
             curr_pt = a + mid_pt
             sgnFP = self._sgn(expr(curr_pt))
@@ -118,8 +125,9 @@ class FindRoot:
                 sol_array["bisection"] = iter_array
                 sol_array["error"] = err_array
                 return curr_pt
-            elif sgnFA * sgnFP > 0: 
-                a = curr_pt 
+
+            if sgnFA * sgnFP > 0:
+                a = curr_pt
             else:
                 b = curr_pt
 
@@ -134,11 +142,12 @@ class FindRoot:
         '''Perform a solution search to univariate mathematics function of the
         form g(p) = p or f(p) - p = 0 by functional iteration technique.
 
+        Consider using scipy.optimize.fixed_point() for production code.
 
         Parameters
         ----------
         init_pt : float, required.
-                  A guess of initial approximation point that should be as 
+                  A guess of initial approximation point that should be as
                   close as possible to actual solution.
         sol_array : dictionary, optional.
                     A "pass-by-reference" way of retriving interim solutions
@@ -155,7 +164,7 @@ class FindRoot:
         expr = self._math_func
 
         p0 = init_pt
-        for i in range(1, self._max_iter):
+        for _ in range(1, self._max_iter):
             curr_pt = expr(p0)
             absDiff = abs(curr_pt-p0)
 
@@ -188,8 +197,11 @@ class FindRoot:
     def Muller(self, init_pt: tuple, sol_array: dict = None) -> float:
         '''
 
+        Consider scipy.optimize.newton for production code.
+
         Algorithm: Burden and Faires, NUMERICAL ANALYSIS(10e), pg97
         '''
+        # pylint: disable=R0914
         iter_array = array.array(self._sol_array_dtype)
         err_array = array.array(self._sol_array_dtype)
         expr = self._math_func
@@ -198,14 +210,14 @@ class FindRoot:
         p0 = init_pt[0]
         p1 = init_pt[1]
         p2 = init_pt[2]
-        
+
         h1 = p1 - p0 # Can be thought of as "differential"
         h2 = p2 - p1 # Can be thought of as "differential"
         delta1 = (expr(p1)-expr(p0)) / h1 # Thought of as secant
         delta2 = (expr(p2)-expr(p1)) / h2 # Thought of as secant
         d = (delta2-delta1) / (h2+h1)
 
-        for i in range(1, self._max_iter):
+        for _ in range(1, self._max_iter):
             b = delta2 + d*h2
             FP2 = expr(p2)
             discrm = (b*b - 4.0*d*FP2)**0.5 # Check for complex val
@@ -240,22 +252,24 @@ class FindRoot:
         return None
 
 
-    def NewtonRaphson(self, 
-            deriv: callable, 
-            init_pt: float, 
+    def NewtonRaphson(
+            self,
+            deriv: callable,
+            init_pt: float,
             sol_array: dict = None) -> float:
         '''Perform a solution search to univariate mathematics function of the
         form f(x) = 0 given an initial approximation point and first-derivative
         function.
 
+        Consider scipy.optimize.newton() for production code.
 
         Parameters
         ----------
         deriv : callable, required.
-                A first derivative function of the mathematics function 
+                A first derivative function of the mathematics function
                 math_expr supplied to FindRoot constructor.
         init_pt : float, required.
-                  A guess of initial approximation point that should be as 
+                  A guess of initial approximation point that should be as
                   close as possible to actual solution.
         sol_array : dictionary, optional.
                     A "pass-by-reference" way of retriving interim solutions
@@ -274,8 +288,8 @@ class FindRoot:
         expr = self._math_func
 
         p0 = init_pt
-        for i in range(1, self._max_iter):
-            curr_pt = p0 - expr(p0)/deriv(p0) # Possible zero-division. 
+        for _ in range(1, self._max_iter):
+            curr_pt = p0 - expr(p0)/deriv(p0) # Possible zero-division.
             absDiff = abs(curr_pt-p0)
 
             if sol_array is not None:
@@ -296,28 +310,29 @@ class FindRoot:
                 sol_array["error"] = err_array
                 return curr_pt
 
-            p0 = curr_pt 
+            p0 = curr_pt
 
         print(f" >> Maximum reached. Last value evaluatd: {curr_pt}")
         sol_array["newton_raphson"] = iter_array
         sol_array["error"] = err_array
         return None
-        
 
 
     def Secant(self, init_pt: tuple, sol_array: dict = None) -> float:
         '''Perform a solution search to univariate mathematics function of the
-        form f(x) = 0 given using two initial approximation point (which forms 
-        a secant line to the function. This is a modified Newton-Raphson Method 
-        in that derivative function is not required. However, Secant method 
+        form f(x) = 0 given using two initial approximation point (which forms
+        a secant line to the function. This is a modified Newton-Raphson Method
+        in that derivative function is not required. However, Secant method
         will converge slower than Newton-Raphson Method.
 
+        Consider scipy.optimize.newton() for production code. Instead of fprime,
+        we can replace derivative with secant definition.
 
         Parameters
         ----------
         init_pt : 2-float, required.
-                  Two initial points to construct "secant line" in place of 
-                  "tangent line" (derivative). 
+                  Two initial points to construct "secant line" in place of
+                  "tangent line" (derivative).
         sol_array : dictionary, optional.
                     A "pass-by-reference" way of retriving interim solutions
                     for later analysis.
@@ -336,8 +351,8 @@ class FindRoot:
         p1 = init_pt[1]
         q0 = expr(p0)
         q1 = expr(p1)
-        for i in range(1, self._max_iter):
-            curr_pt = p1 - q1*(p1-p0)/(q1-q0) # Possible zero-division. 
+        for _ in range(1, self._max_iter):
+            curr_pt = p1 - q1*(p1-p0) / (q1-q0) # Possible zero-division.
             absDiff = abs(curr_pt-p1)
 
             if sol_array is not None:
@@ -375,11 +390,13 @@ class FindRoot:
         Steffensen Method is a modified Aitken Delta-Squared Method to ensure
         quadratic convergence, if conditions are met for the mathematics 
         function math_expr.
-        
+
         Chiefly, if derivative g'(p) is not 1, and that function g has 
         continuous third derivative around a neighborhood of the solution p,
         then Steffensen method will guarantee quadratic order of convergence.
 
+        For production code, consider scipy.optimize.fixed_point() with method
+        set to 'del2'
 
         Parameters
         ----------
@@ -401,7 +418,7 @@ class FindRoot:
         expr = self._math_func
 
         p0 = init_pt
-        for i in range(1, self._max_iter):
+        for _ in range(1, self._max_iter):
             p1 = expr(p0)
             p2 = expr(p1)
             curr_pt = p0 - (p1-p0)**2 / (p2 - 2.0*p1 + p0) # Potential 0-div
@@ -433,9 +450,10 @@ class FindRoot:
         return None
 
 
-    def Configure(self, 
-            tol: float = 1e-6, 
-            max_iter: int = 1000, 
+    def Configure(
+            self,
+            tol: float = 1e-6,
+            max_iter: int = 1000,
             sol_array_dtype: str = 'd'):
         '''Configuration setting for FindRoot object.
 
