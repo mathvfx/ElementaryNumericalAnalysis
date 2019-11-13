@@ -1,24 +1,23 @@
 #!env python3
-# pylint: disable=C0303
 
-#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-# A personal academic exercise for elementary numerical analysis to study and 
-# explore well-known Root-Finder algorithms for continuous, univariate 
-# real-valued functions.
-#
+# pylint: disable=C0303,W0511
+'''
+A personal academic exercise for elementary numerical analysis to study and 
+explore well-known Root-Finder algorithms for continuous, univariate 
+real-valued functions.
 
-# For production code, please consider using SciPy library.
-#
-# TODO:
-#   1) Documentation and docstrings
-#   2) Profile code to optimize
-#   3) Build unit test cases. (include coverage test)
-#   4) Think about how to adapt these methods to multivariate functions
-#
-# Alex Lim - mathvfx.github.io - 2019
-#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+For production code, please consider using SciPy library.
+
+TODO:
+  1) Documentation and docstrings
+  2) Profile code to optimize
+  3) Build unit test cases. (include coverage test)
+  4) Think about how to adapt these methods to multivariate functions
+
+Alex Lim - mathvfx.github.io - 2019
+'''
 import array
-import math
+
 
 class FindRoot:
     '''A root-finding class for continuous, real-valued function of single
@@ -59,24 +58,23 @@ class FindRoot:
         '''
         if val > 0:
             return 1
-
         if val < 0:
             return -1
-
         return 0
 
 
     def Bisection(self, bracket: tuple, sol_array: dict = None) -> float:
-        '''Perform a solution search to univariate mathematics function of the
-        form f(x) = 0 by continuously halving the given interval (bracketing)
-        until value is within error tolerance.
+        '''Perform a solution search to univariate mathematics, real-valued
+        function of the form f(x) = 0 by continuously halving the given interval
+        (bracketing) until value is within error tolerance.
 
         Consider scipy.optimize.bisect() for production code.
 
         Parameters
         ----------
         bracket : 2-float, required.
-                  Interval (a,b) with a <= b for which a solution may be located.
+                  Interval (a,b) with a <= b for which a real-valued solution 
+                  may be located.
         sol_array : dictionary, optional.
                     A "pass-by-reference" way of retriving interim solutions
                     for later analysis.
@@ -84,8 +82,7 @@ class FindRoot:
         Returns
         ----------
         result : approximate solution to within error tolerance for mathmatics
-                 function provided, if solution exists. Otherwise,
-                 None is returned.
+                 function provided, if exists. Otherwise, None is returned.
         '''
         iter_array = array.array(self._sol_array_dtype)
         err_array = array.array(self._sol_array_dtype)
@@ -96,16 +93,14 @@ class FindRoot:
         if a > b:
             raise ValueError(" >> bracket (a,b) must have a <= b")
 
+        # Initial condition check
         sgnFA = self._sgn(expr(a)) # Sign of expr evaluated at left interval
         sgnFB = self._sgn(expr(b)) # SIgn of expr evaluated at right interval
-
-        # Initial condition check
         if sgnFA * sgnFB > 0:
             # FA and FB having same sign imply expr never crosses zero and thus
             # no solution within initial interval. This behavior is guaranteed
             # by Intermediate Value Theorem for continuous function.
-            print(f" >> Function might not have solution on [{a}, {b}]. \
-                    Try narrowing the bracket to where zeros may exist.")
+            print(f">>> No real-value solution found on [{a}, {b}].")
             return None
 
         # Perform bisection search until max limit or within tolerance
@@ -121,20 +116,24 @@ class FindRoot:
 
             if mid_pt < self._tol or sgnFP == 0:
                 # Found solution
-                print(f" >> Approximate solution: {curr_pt} Accuracy: {mid_pt}")
-                sol_array["bisection"] = iter_array
-                sol_array["error"] = err_array
+                print(f">> Bisection: {curr_pt} in {i} iteration.")
+                if sol_array is not None:
+                    sol_array["bisection"] = iter_array
+                    sol_array["error"] = err_array
                 return curr_pt
 
+            # Update intervals for the next iteration
             if sgnFA * sgnFP > 0:
                 a = curr_pt
             else:
                 b = curr_pt
 
-        print(f" >> Maximum reached. Either no solution or slow convergence. \
-                Last value: {curr_pt}")
-        sol_array["bisection"] = iter_array
-        sol_array["error"] = err_array
+        # No solution
+        print(f">>> Maximum reached. Either no solution or slow convergence.")
+        print(f"    Last approximation: {curr_pt} after {i} attempt.")
+        if sol_array is not None:
+            sol_array["bisection"] = iter_array
+            sol_array["error"] = err_array
         return None
 
 
@@ -156,8 +155,7 @@ class FindRoot:
         Returns
         ----------
         result : approximate solution to within error tolerance for mathmatics
-                 function provided, if solution exists. Otherwise,
-                 None is returned.
+                 function provided, if exists. Otherwise, None is returned.
         '''
         iter_array = array.array(self._sol_array_dtype)
         err_array = array.array(self._sol_array_dtype)
@@ -166,43 +164,61 @@ class FindRoot:
         p0 = init_pt
         for _ in range(1, self._max_iter):
             curr_pt = expr(p0)
-            absDiff = abs(curr_pt-p0)
+            abs_diff = abs(curr_pt-p0)
 
             if sol_array is not None:
                 # Store each interim result and its error for later analysis
                 iter_array.append(curr_pt)
-                err_array.append(absDiff)
+                err_array.append(abs_diff)
 
-            if math.isinf(curr_pt):
-                print(" >> WARNING: INF detected. No solution found.")
-                sol_array["fixed_point"] = iter_array
-                sol_array["error"] = err_array
-                return None
-
-            if absDiff < self._tol:
+            if abs_diff < self._tol:
                 # Found a solution within erro tolerance
-                print(f" >> Approximate solution: {curr_pt} Accuracy: {absDiff}")
-                sol_array["fixed_point"] = iter_array
-                sol_array["error"] = err_array
+                print(f">> Fixed-Point: {curr_pt} after {i} iterations.")
+                if sol_array is not None:
+                    sol_array["fixed_point"] = iter_array
+                    sol_array["error"] = err_array
                 return curr_pt
 
+            # Update for next iterations
             p0 = curr_pt
 
-        print(f" >> Maximum reached. Last value evaluatd: {curr_pt}")
-        sol_array["fixed_point"] = iter_array
-        sol_array["error"] = err_array
+        # No solution
+        print(f">>> FixedPoint: Maximum reached. Last evaluation: {curr_pt}")
+        if sol_array is not None:
+            sol_array["fixed_point"] = iter_array
+            sol_array["error"] = err_array
         return None
 
 
     def Muller(self, init_pt: tuple, sol_array: dict = None) -> float:
-        '''
+        '''Perform iterative solution search to univariate mathematics function 
+        of the form f(x) = 0 given three sequential initial approximation points.
+        Muller's Method can find complex-valued roots.
 
         Consider scipy.optimize.newton for production code.
 
-        Algorithm: Burden and Faires, NUMERICAL ANALYSIS(10e), pg97
+        Parameters
+        ----------
+        init_pt : 3-float, required.
+                  A guess of initial approximation points upon which roots may 
+                  exist. Closer approximation will provide faster convergence.
+        sol_array : dictionary, optional.
+                    A "pass-by-reference" way of retriving interim solutions
+                    for later analysis. sol_array for Muller method will contain
+                    both real array and imaginary array.
+
+        Returns
+        ----------
+        result : approximate solution to within error tolerance for mathmatics
+                 function provided, if exists. Otherwise, None is returned.
+
+        Reference
+        ----------
+           Burden and Faires, NUMERICAL ANALYSIS(10e), pg97
         '''
         # pylint: disable=R0914
-        iter_array = array.array(self._sol_array_dtype)
+        iter_array = array.array(self._sol_array_dtype) # Store real part
+        iter_array_im = array.array(self._sol_array_dtype) # Store imaginary part
         err_array = array.array(self._sol_array_dtype)
         expr = self._math_func
 
@@ -210,7 +226,6 @@ class FindRoot:
         p0 = init_pt[0]
         p1 = init_pt[1]
         p2 = init_pt[2]
-
         h1 = p1 - p0 # Can be thought of as "differential"
         h2 = p2 - p1 # Can be thought of as "differential"
         delta1 = (expr(p1)-expr(p0)) / h1 # Thought of as secant
@@ -226,19 +241,25 @@ class FindRoot:
             else:
                 h = -2.0*FP2 / (b-discrm)
             curr_pt = p2 + h
-            print(f"{i:03d}: {curr_pt: }")
-            #if sol_array is not None:
-            #    # Store each interim result and its error for later analysis
-            #    iter_array.append(curr_pt)
-            #    err_array.append(abs(h))
+
+            if sol_array is not None:
+                # Store each interim result and its error for later analysis
+                iter_array.append(curr_pt.real)
+                if isinstance(curr_pt, complex):
+                    iter_array_im.append(curr_pt.imag)
+                err_array.append(abs(h))
 
             if abs(h) < self._tol:
                 # Found a solution within erro tolerance
-                print(f" >> Approximate solution: {curr_pt}")
-                #sol_array["muller"] = iter_array
-                #sol_array["error"] = err_array
+                print(f">> Muller: {curr_pt} in {i} iterations.")
+                if sol_array is not None:
+                    sol_array["muller"] = iter_array
+                    if isinstance(curr_pt, complex):
+                        sol_array["muller_im"] = iter_array_im
+                    sol_array["error"] = err_array
                 return curr_pt
 
+            # Update for next iteration
             p0, p1, p2 = p1, p2, curr_pt
             h1 = p1 - p0
             h2 = p2 - p1
@@ -246,9 +267,13 @@ class FindRoot:
             delta2 = (expr(p2)-expr(p1)) / h2
             d = (delta2-delta1) / (h2+h1)
 
-        print(f" >> Maximum reached. Last value evaluatd: {curr_pt}")
-        #sol_array["muller"] = iter_array
-        #sol_array["error"] = err_array
+        # No solution
+        print(f">>> Muller: Maximum reached. Last evaluation: {curr_pt}")
+        if sol_array is not None:
+            sol_array["muller"] = iter_array
+            if isinstance(curr_pt, complex):
+                sol_array["muller_im"] = iter_array_im
+            sol_array["error"] = err_array
         return None
 
 
@@ -278,8 +303,7 @@ class FindRoot:
         Returns
         ----------
         result : approximate solution to within error tolerance for mathmatics
-                 function provided, if solution exists. Otherwise,
-                 None is returned.
+                 function provided, if exists. Otherwise, None is returned.
         '''
         if not callable(deriv):
             raise TypeError(" >> 'deriv' must be callable derivative function.")
@@ -288,33 +312,31 @@ class FindRoot:
         expr = self._math_func
 
         p0 = init_pt
-        for _ in range(1, self._max_iter):
+        for i in range(1, self._max_iter):
             curr_pt = p0 - expr(p0)/deriv(p0) # Possible zero-division.
-            absDiff = abs(curr_pt-p0)
+            abs_diff = abs(curr_pt-p0)
 
             if sol_array is not None:
                 # Store each interim result and its error for later analysis
                 iter_array.append(curr_pt)
-                err_array.append(absDiff)
+                err_array.append(abs_diff)
 
-            if math.isinf(curr_pt):
-                print(" >> WARNING: INF detected. No solution found.")
-                sol_array["newton_raphson"] = iter_array
-                sol_array["error"] = err_array
-                return None
-
-            if absDiff < self._tol:
+            if abs_diff < self._tol:
                 # Found a solution within erro tolerance
-                print(f" >> Approximate solution: {curr_pt} Accuracy: {absDiff}")
-                sol_array["newton_raphson"] = iter_array
-                sol_array["error"] = err_array
+                print(f">> Newton-Raphson: {curr_pt} in {i} iteration.")
+                if sol_array is not None:
+                    sol_array["newton_raphson"] = iter_array
+                    sol_array["error"] = err_array
                 return curr_pt
 
+            # Update for next iteration
             p0 = curr_pt
 
-        print(f" >> Maximum reached. Last value evaluatd: {curr_pt}")
-        sol_array["newton_raphson"] = iter_array
-        sol_array["error"] = err_array
+        # No solution
+        print(f">>> Newton: Maximum reached. Last evaluation: {curr_pt}")
+        if sol_array is not None:
+            sol_array["newton_raphson"] = iter_array
+            sol_array["error"] = err_array
         return None
 
 
@@ -340,8 +362,7 @@ class FindRoot:
         Returns
         ----------
         result : approximate solution to within error tolerance for mathmatics
-                 function provided, if solution exists. Otherwise,
-                 None is returned.
+                 function provided, if exists. Otherwise, None is returned.
         '''
         iter_array = array.array(self._sol_array_dtype)
         err_array = array.array(self._sol_array_dtype)
@@ -351,36 +372,34 @@ class FindRoot:
         p1 = init_pt[1]
         q0 = expr(p0)
         q1 = expr(p1)
-        for _ in range(1, self._max_iter):
+        for i in range(1, self._max_iter):
             curr_pt = p1 - q1*(p1-p0) / (q1-q0) # Possible zero-division.
-            absDiff = abs(curr_pt-p1)
+            abs_diff = abs(curr_pt-p1)
 
             if sol_array is not None:
                 # Store each interim result and its error for later analysis
                 iter_array.append(curr_pt)
-                err_array.append(absDiff)
+                err_array.append(abs_diff)
 
-            if math.isinf(curr_pt):
-                print(" >> WARNING: INF detected. No solution found.")
-                sol_array["secant"] = iter_array
-                sol_array["error"] = err_array
-                return None
-
-            if absDiff < self._tol:
+            if abs_diff < self._tol:
                 # Found a solution within erro tolerance
-                print(f" >> Approximate solution: {curr_pt} Accuracy: {absDiff}")
-                sol_array["secant"] = iter_array
-                sol_array["error"] = err_array
+                print(f">> Secant: {curr_pt} in {i} iterations.")
+                if sol_array is not None:
+                    sol_array["secant"] = iter_array
+                    sol_array["error"] = err_array
                 return curr_pt
 
+            # Update for next iteration
             p0 = p1
             p1 = curr_pt
             q0 = q1
             q1 = expr(curr_pt)
 
-        print(f" >> Maximum reached. Last value evaluatd: {curr_pt}")
-        sol_array["secant"] = iter_array
-        sol_array["error"] = err_array
+        # No Solution 
+        print(f">>> Secant: Maximum reached. Last evaluation: {curr_pt}")
+        if sol_array is not None:
+            sol_array["secant"] = iter_array
+            sol_array["error"] = err_array
         return None
 
 
@@ -410,8 +429,7 @@ class FindRoot:
         Returns
         ----------
         result : approximate solution to within error tolerance for mathmatics
-                 function provided, if solution exists. Otherwise,
-                 None is returned.
+                 function provided, if exists. Otherwise, None is returned.
         '''
         iter_array = array.array(self._sol_array_dtype)
         err_array = array.array(self._sol_array_dtype)
@@ -422,31 +440,30 @@ class FindRoot:
             p1 = expr(p0)
             p2 = expr(p1)
             curr_pt = p0 - (p1-p0)**2 / (p2 - 2.0*p1 + p0) # Potential 0-div
-            absDiff = abs(curr_pt-p0)
+            abs_diff = abs(curr_pt-p0)
 
             if sol_array is not None:
                 # Store each interim result and its error for later analysis
-                iter_array.append(curr_pt)
-                err_array.append(absDiff)
+                if sol_array is not None:
+                    iter_array.append(curr_pt)
+                    err_array.append(abs_diff)
 
-            if math.isinf(curr_pt):
-                print(" >> WARNING: INF detected. No solution found.")
-                sol_array["steffensen"] = iter_array
-                sol_array["error"] = err_array
-                return None
-
-            if absDiff < self._tol:
+            if abs_diff < self._tol:
                 # Found a solution within erro tolerance
-                print(f" >> Approximate solution: {curr_pt} Accuracy: {absDiff}")
-                sol_array["steffensen"] = iter_array
-                sol_array["error"] = err_array
+                print(f">> Steffensen: {curr_pt} in {i} iterations.")
+                if sol_array is not None:
+                    sol_array["steffensen"] = iter_array
+                    sol_array["error"] = err_array
                 return curr_pt
 
+            # Update for next iteration
             p0 = curr_pt
 
-        print(f" >> Maximum reached. Last value evaluatd: {curr_pt}")
-        sol_array["steffensen"] = iter_array
-        sol_array["error"] = err_array
+        # No Solution
+        print(f">>> Steffensen: Maximum reached. Last evaluation: {curr_pt}")
+        if sol_array is not None:
+            sol_array["steffensen"] = iter_array
+            sol_array["error"] = err_array
         return None
 
 
@@ -473,19 +490,64 @@ class FindRoot:
         self._sol_array_dtype = sol_array_dtype
 
 
-
 if __name__ == "__main__":
-    def f1(x): return x*x*x + 4*x*x - 10.0
-    def f2(x): return (10.0 / (x+4.0))**0.5
-    def f1d(x): return 3.0*x*x + 8.0*x
-    def f3(x): return x**4 - 3*x**3 +x**2 + x + 1
-    sol1 = FindRoot(f3)
-    #sol1.Configure(max_iter=25)
-    intermediate = dict()
-    #sol1.Bisection((1,2), sol_array=intermediate) 
-    #sol1.FixedPoint(1.5, sol_array=intermediate)
-    #sol1.NewtonRaphson(f1d, 1.5, sol_array=intermediate)
-    #sol1.Secant((1.2, 1.6), sol_array=intermediate)
-    #sol1.Steffensen(1.5, sol_array=intermediate)
-    #print(intermediate)
-    sol1.Muller((0.5, -0.5, 0))
+    import matplotlib.pyplot as plt  # Only for testing
+    import scipy.optimize as optimize
+
+    print("\n\tROOT-FINDING EXAMPLES\n")
+
+    # f1 has two real roots within [1,3], and two complex root at [-0.5, 0.5]
+    #f1s = lambda x: x**4 - 3*x**3 + x*x + x + 1 # Simplified math
+    f1 = lambda x: x*(x*(x*(x-3) + 1) + 1) + 1 # Same as f1s, less arithmetics
+    f1d = lambda x: x*(x*(4*x - 9) + 2) + 1 # derivative of f1 at x
+
+    # Array storage:
+    store_bisection = dict()
+    store_newton = dict()
+    store_secant = dict()
+    store_muller1 = dict()
+    store_muller2 = dict()
+
+    # Search for roots of the form f(x) = 0
+    # By Fundamental Theorem of Algebra, we can expect f1 to have 4 roots.
+    root1 = FindRoot(f1)
+    root1.Configure(max_iter=50)
+    root1.Bisection((1, 2), store_bisection) 
+    root1.Bisection((2, 3))  
+    root1.Bisection((-1, 1)) # Can't do complex root
+    print()
+    root1.NewtonRaphson(f1d, 1, store_newton)
+    root1.NewtonRaphson(f1d, 2)
+    root1.NewtonRaphson(f1d, -1) # Can't find complex root
+    print()
+    root1.Secant((1, 1.2), store_secant)
+    root1.Secant((2, 2.2))
+    root1.Secant((-2, -1)) # Can't find complex root
+    print()
+    root1.Muller((1, 1.5, 2), store_muller1)
+    root1.Muller((2, 2.5, 3))
+    root1.Muller((-1, 0, 1), store_muller2) # Can find complex root!
+
+    # Search for roots of the form g(x) = x (a.k.a. fixed point)
+    print("\n\nExpressing f1 in fixed-point form:") 
+
+    # Express f1 in g(x)=x form. 
+    # Be careful that domain of f1 may have changed and might not converge
+    f2 = lambda x: (-(x+1) / (x*x - 3*x + 1))**0.5
+    root2 = FindRoot(f2)
+    root2.FixedPoint(1)
+    print("\tVerify FixedPoint with SciPy result: ", end="")
+    print(optimize.fixed_point(f2, 1, xtol=1e-6, method="iteration"))
+
+    root2.Steffensen(1)
+    print("\tVerify Steffensen with SciPy result: ", end="")
+    print(optimize.fixed_point(f2, 1, xtol=1e-6, method="del2"))
+    
+    # Without changing form, FixedPoint and Steffensen won't give correct result
+    print("\nWrong result if when using f(x)=0 form:")
+    root1.FixedPoint(1) 
+    root1.Steffensen(0.5) # div-by-zero if init_pt=1
+
+    # Display convergence results
+    #plt.plot(store_bisection["bisection"]) 
+    #plt.show()
