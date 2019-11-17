@@ -1,16 +1,15 @@
 # Elementary Numerical Analysis
-There already exists many advanced numerical techniques to solve hard mathematical problems, thus the chief purpose of this personal project is four-fold:
+There already exists advanced numerical techniques to solve hard mathematical problems, thus the chief purpose of this personal project is as follow:
 
-1. To practice programming method using Python (for now!)  
-2. To review and solidify understanding in numerical linear algebra methods for employment in wide-ranging industry
-3. As a programming portfolio for employment consideration.
+1. A mathematical writing in my own words and from my own notes (reinforcement learning)
+2. Programming practice using Python (for now!)
+3. To review and solidify understanding in numerical linear algebra methods for employment in wide-ranging industry
+4. As a programming portfolio for employment consideration
 
 ##### _Wikipage write up will follow later._
 
 ##  
 ### Project Categories
-This project will be further categorized into Root Finder, Matrix Algebra, Interpolation, Differentiation and Integration, and Approximation.
-
 #### 1. Root Finder
 * Elementary algebraic technique of finding solutions to polynomials. This will serves as a warm-up exercises for what follows.
 
@@ -20,7 +19,7 @@ This project will be further categorized into Root Finder, Matrix Algebra, Inter
 #### 3. Interpolation
 * Elementary method for interpolating finite data.
 
-#### 4. Single Variate Numerical Calculus
+#### 4. Numerical Univariate Calculus
 * Traditional pure mathematics techniques tend to be quite difficult to apply directly in computing. Therefore, we will learn various numerical techniques to differentiate and integrate function of single variables.
 
 #### 5. Approximation Theory
@@ -49,7 +48,6 @@ My source/reference materials are:
  * `CALCULUS IN 3D (Nitecki)`
  * `ELEMENTARY ANALYSIS (Ross)`
  * `LINEAR ALGEBRA DONE RIGHT (Axler)`
- * `PRINCIPLES OF MATHEMATICAL ANALYSIS (Rudin)`
  * `NUMERICAL ANALYSIS (Burden and Faires)`
  
 ##### _I am in no way endorsing any of these textbooks, and my opinions are entirely my own._
