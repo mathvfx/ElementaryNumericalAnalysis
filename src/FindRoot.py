@@ -94,9 +94,9 @@ class FindRoot:
             raise ValueError(" >> bracket (a,b) must have a <= b")
 
         # Initial condition check
-        sgnFA = self._sgn(expr(a)) # Sign of expr evaluated at left interval
-        sgnFB = self._sgn(expr(b)) # SIgn of expr evaluated at right interval
-        if sgnFA * sgnFB > 0:
+        sgn_FA = self._sgn(expr(a)) # Sign of expr evaluated at left interval
+        sgn_FB = self._sgn(expr(b)) # SIgn of expr evaluated at right interval
+        if sgn_FA * sgn_FB > 0:
             # FA and FB having same sign imply expr never crosses zero and thus
             # no solution within initial interval. This behavior is guaranteed
             # by Intermediate Value Theorem for continuous function.
@@ -104,17 +104,17 @@ class FindRoot:
             return None
 
         # Perform bisection search until max limit or within tolerance
-        for _ in range(1, self._max_iter):
+        for i in range(1, self._max_iter):
             mid_pt = (b-a) / 2.0
             curr_pt = a + mid_pt
-            sgnFP = self._sgn(expr(curr_pt))
+            sgn_FP = self._sgn(expr(curr_pt))
 
             if sol_array is not None:
                 # Store each interim result and its error for later analysis
                 iter_array.append(curr_pt)
                 err_array.append(mid_pt)
 
-            if mid_pt < self._tol or sgnFP == 0:
+            if mid_pt < self._tol or sgn_FP == 0:
                 # Found solution
                 print(f">> Bisection: {curr_pt} in {i} iteration.")
                 if sol_array is not None:
@@ -123,7 +123,7 @@ class FindRoot:
                 return curr_pt
 
             # Update intervals for the next iteration
-            if sgnFA * sgnFP > 0:
+            if sgn_FA * sgn_FP > 0:
                 a = curr_pt
             else:
                 b = curr_pt
@@ -162,7 +162,7 @@ class FindRoot:
         expr = self._math_func
 
         p0 = init_pt
-        for _ in range(1, self._max_iter):
+        for i in range(1, self._max_iter):
             curr_pt = expr(p0)
             abs_diff = abs(curr_pt-p0)
 
@@ -232,7 +232,7 @@ class FindRoot:
         delta2 = (expr(p2)-expr(p1)) / h2 # Thought of as secant
         d = (delta2-delta1) / (h2+h1)
 
-        for _ in range(1, self._max_iter):
+        for i in range(1, self._max_iter):
             b = delta2 + d*h2
             FP2 = expr(p2)
             discrm = (b*b - 4.0*d*FP2)**0.5 # Check for complex val
@@ -436,7 +436,7 @@ class FindRoot:
         expr = self._math_func
 
         p0 = init_pt
-        for _ in range(1, self._max_iter):
+        for i in range(1, self._max_iter):
             p1 = expr(p0)
             p2 = expr(p1)
             curr_pt = p0 - (p1-p0)**2 / (p2 - 2.0*p1 + p0) # Potential 0-div
@@ -544,7 +544,7 @@ if __name__ == "__main__":
     print(optimize.fixed_point(f2, 1, xtol=1e-6, method="del2"))
     
     # Without changing form, FixedPoint and Steffensen won't give correct result
-    print("\nWrong result if when using f(x)=0 form:")
+    print("\nIncorrect result when using fixed-point on f(x)=0 form:")
     root1.FixedPoint(1) 
     root1.Steffensen(0.5) # div-by-zero if init_pt=1
 
