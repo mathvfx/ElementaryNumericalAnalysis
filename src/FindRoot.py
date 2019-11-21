@@ -2,21 +2,21 @@
 
 # pylint: disable=C0303,W0511
 '''
-A personal academic exercise for elementary numerical analysis to study and 
-explore well-known Root-Finder algorithms for continuous, univariate 
-real-valued functions.
+A personal academic exercise code for elementary numerical analysis to study and 
+explore well-known Root-Finder algorithms for continuous, univariate functions.
 
 For production code, please consider using SciPy library.
 
 TODO:
-  1) Documentation and docstrings
-  2) Profile code to optimize
-  3) Build unit test cases. (include coverage test)
-  4) Think about how to adapt these methods to multivariate functions
+  1) Profile code to optimize? 
+  2) Build unit test cases. (include coverage test)
+  3) Think about how to adapt these methods to multivariate functions
 
 Alex Lim - mathvfx.github.io - 2019
 '''
 import array
+
+from typing import Callable
 
 
 class FindRoot:
@@ -34,7 +34,7 @@ class FindRoot:
     '''
 
 
-    def __init__(self, math_expr: callable):
+    def __init__(self, math_expr: Callable[[float], float]):
         '''FindRoot class constructor.
 
         Parameters
@@ -84,6 +84,13 @@ class FindRoot:
         result : approximate solution to within error tolerance for mathmatics
                  function provided, if exists. Otherwise, None is returned.
         '''
+        # Pre-check parameter type
+        if not isinstance(bracket, (tuple, list)):
+            raise TypeError(">> 'bracket' must be a 2-tuple.")
+        if not isinstance(sol_array, dict) and sol_array is not None:
+            raise TypeError(">> 'sol_array' must be a dict.") 
+
+        # Initialize
         iter_array = array.array(self._sol_array_dtype)
         err_array = array.array(self._sol_array_dtype)
         expr = self._math_func
@@ -91,7 +98,7 @@ class FindRoot:
         a = bracket[0]
         b = bracket[1]
         if a > b:
-            raise ValueError(" >> bracket (a,b) must have a <= b")
+            raise ValueError(" >> bracket (a,b) must satisfy a <= b")
 
         # Initial condition check
         sgn_FA = self._sgn(expr(a)) # Sign of expr evaluated at left interval
@@ -157,11 +164,19 @@ class FindRoot:
         result : approximate solution to within error tolerance for mathmatics
                  function provided, if exists. Otherwise, None is returned.
         '''
+        # Pre-check parameter type
+        if not isinstance(init_pt, (int, float)):
+            raise TypeError(">> 'init_pt' must be a numeric.")
+        if not isinstance(sol_array, dict) and sol_array is not None:
+            raise TypeError(">> 'sol_array' must be a dict.") 
+
+        # Initialize
         iter_array = array.array(self._sol_array_dtype)
         err_array = array.array(self._sol_array_dtype)
         expr = self._math_func
-
         p0 = init_pt
+
+        # Perform fixed-point iteration
         for i in range(1, self._max_iter):
             curr_pt = expr(p0)
             abs_diff = abs(curr_pt-p0)
@@ -216,13 +231,18 @@ class FindRoot:
         ----------
            Burden and Faires, NUMERICAL ANALYSIS(10e), pg97
         '''
+        # Pre-check parameter type
+        if not isinstance(init_pt, (tuple, list)):
+            raise TypeError(">> 'init_pt' must be a 3-tuple of numerics.")
+        if not isinstance(sol_array, dict) and sol_array is not None:
+            raise TypeError(">> 'sol_array' must be a dict.") 
+
+        # Initialize
         # pylint: disable=R0914
         iter_array = array.array(self._sol_array_dtype) # Store real part
         iter_array_im = array.array(self._sol_array_dtype) # Store imaginary part
         err_array = array.array(self._sol_array_dtype)
         expr = self._math_func
-
-        # Initialize data
         p0 = init_pt[0]
         p1 = init_pt[1]
         p2 = init_pt[2]
@@ -232,6 +252,7 @@ class FindRoot:
         delta2 = (expr(p2)-expr(p1)) / h2 # Thought of as secant
         d = (delta2-delta1) / (h2+h1)
 
+        # Perform Muller iterative search
         for i in range(1, self._max_iter):
             b = delta2 + d*h2
             FP2 = expr(p2)
@@ -305,13 +326,21 @@ class FindRoot:
         result : approximate solution to within error tolerance for mathmatics
                  function provided, if exists. Otherwise, None is returned.
         '''
+        # Pre-check parameter type
         if not callable(deriv):
             raise TypeError(" >> 'deriv' must be callable derivative function.")
+        if not isinstance(init_pt, (int, float)):
+            raise TypeError(">> 'init_pt' must be a numeric.")
+        if not isinstance(sol_array, dict) and sol_array is not None:
+            raise TypeError(">> 'sol_array' must be a dict.") 
+
+        # Initialize
         iter_array = array.array(self._sol_array_dtype)
         err_array = array.array(self._sol_array_dtype)
         expr = self._math_func
-
         p0 = init_pt
+
+        # Perform Newton-Raphson iterative search
         for i in range(1, self._max_iter):
             curr_pt = p0 - expr(p0)/deriv(p0) # Possible zero-division.
             abs_diff = abs(curr_pt-p0)
@@ -364,14 +393,22 @@ class FindRoot:
         result : approximate solution to within error tolerance for mathmatics
                  function provided, if exists. Otherwise, None is returned.
         '''
+        # Pre-check parameter type
+        if not isinstance(init_pt, (tuple, list)):
+            raise TypeError(">> 'init_pt' must be a 2-tuple of numerics.")
+        if not isinstance(sol_array, dict) and sol_array is not None:
+            raise TypeError(">> 'sol_array' must be a dict.") 
+
+        # Initialize
         iter_array = array.array(self._sol_array_dtype)
         err_array = array.array(self._sol_array_dtype)
         expr = self._math_func
-
         p0 = init_pt[0]
         p1 = init_pt[1]
         q0 = expr(p0)
         q1 = expr(p1)
+
+        # Perform Secant iterative search
         for i in range(1, self._max_iter):
             curr_pt = p1 - q1*(p1-p0) / (q1-q0) # Possible zero-division.
             abs_diff = abs(curr_pt-p1)
@@ -406,13 +443,13 @@ class FindRoot:
     def Steffensen(self, init_pt: float, sol_array: dict = None) -> float:
         '''Perform a solution search to univariate mathematics function of the
         form g(p) = p or x - f(x) = 0 given an initial approximation point. 
+
         Steffensen Method is a modified Aitken Delta-Squared Method to ensure
         quadratic convergence, if conditions are met for the mathematics 
-        function math_expr.
-
-        Chiefly, if derivative g'(p) is not 1, and that function g has 
-        continuous third derivative around a neighborhood of the solution p,
-        then Steffensen method will guarantee quadratic order of convergence.
+        function math_expr. Chiefly, if derivative g'(p) is not 1, and that 
+        function g has continuous third derivative around a neighborhood of 
+        solution p, then Steffensen method will guarantee quadratic order of 
+        convergence.
 
         For production code, consider scipy.optimize.fixed_point() with method
         set to 'del2'
@@ -431,11 +468,19 @@ class FindRoot:
         result : approximate solution to within error tolerance for mathmatics
                  function provided, if exists. Otherwise, None is returned.
         '''
+        # Pre-check parameter type
+        if not isinstance(init_pt, (int, float)):
+            raise TypeError(">> 'init_pt' must be a numeric.")
+        if not isinstance(sol_array, dict) and sol_array is not None:
+            raise TypeError(">> 'sol_array' must be a dict.") 
+
+        # Initialize
         iter_array = array.array(self._sol_array_dtype)
         err_array = array.array(self._sol_array_dtype)
         expr = self._math_func
-
         p0 = init_pt
+
+        # Perform Steffensen iterative search
         for i in range(1, self._max_iter):
             p1 = expr(p0)
             p2 = expr(p1)
@@ -494,7 +539,7 @@ if __name__ == "__main__":
     import matplotlib.pyplot as plt  # Only for testing
     import scipy.optimize as optimize
 
-    print("\n\tROOT-FINDING EXAMPLES\n")
+    print("\n\tROOT-FINDING EXAMPLES AND TESTING\n")
 
     # f1 has two real roots within [1,3], and two complex root at [-0.5, 0.5]
     #f1s = lambda x: x**4 - 3*x**3 + x*x + x + 1 # Simplified math
