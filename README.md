@@ -11,7 +11,7 @@ There already exists advanced numerical techniques to solve hard mathematical pr
 ##  
 ### Project Categories
 #### 1. Root Finder
-* Elementary algebraic technique of finding solutions to polynomials. This will serves as a warm-up exercises for what follows.
+* Elementary algebraic technique of finding solutions to polynomials. While root-finding may seem a fairly trivial exercises, its underlying applications are wide&mdash; especially toward optimization theory that are now widely used in computer science, data science, and even machine learning. This will serves as a warm-up exercises for what follows.
 
 #### 2. Matrix Algebra
 * Elementary matrix algebra techniques to solving system of linear equations. This section will make heavy use of Numpy. We will go as far as approximation techniques for solving eigenvalues problems.
